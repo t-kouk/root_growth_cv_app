@@ -1,12 +1,10 @@
 # Read libraries
-from os import getcwd
 from pathlib import Path
 from PIL import Image
+from os import listdir
 import torch
 import torchvision
-from skimage.morphology import erosion
 import matplotlib.pyplot as plt
-import time
 import logging
 from torchvision.transforms import functional as F
 
@@ -140,9 +138,16 @@ class DLModel():
             model.load_state_dict(torch.load(self.weights_path))
         # Get image paths
         img_paths = read_dir.glob("*.jpg")
+        old_result_imgs = set(listdir(result_dir))
 
         # Loop image paths and make predictions
         for img_path in img_paths:
+            if old_result_imgs:
+                img_file = img_path.parts[-1]
+                img_name = img_file.split(".jpg")[0]
+                if any({img_name in res_img for res_img in old_result_imgs}):
+                    logging.info(f'Segmented image from {img_file} exists already. Skip to next.')
+                    continue
             if exit_flag and exit_flag.is_set():
                 logging.info("Received exit signal, terminating run")
                 return

@@ -44,8 +44,8 @@ def pipeline_run(input_path, output_folder, root_tip_size, scenario, progress=No
     if not os.path.exists(dl_images):
         os.mkdir(dl_images)
     if os.listdir(dl_images):
-        logging.warning('Folder for processed images is not empty and any duplicate images will be overwritten. Use CTRL-C to abort.')
-        sleep(5)
+        logging.info('NOTE: Folder for processed images is not empty. Segmented images will not be recreated.')
+        sleep(2)
 
     DLModel().apply_dl_model(input_path, dl_images, progress, step, exit_flag)
     if exit_flag and exit_flag.is_set():
